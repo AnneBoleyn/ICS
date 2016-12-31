@@ -3,22 +3,21 @@ import java.util.*;
 public class Hogwarts {
 	public static ArrayList <Hogwarts> coordinates = new ArrayList <Hogwarts> ();
 	public static ArrayList <Hogwarts> maxY = new ArrayList <Hogwarts> ();
+	public static ArrayList <Hogwarts> walls = new ArrayList <Hogwarts> ();
 	public int x, y; 
 	boolean extra = false;
 	public static boolean scrolling = false;
 	public static int max = 0; 
+	public static int count = 0;
 	public Hogwarts(){
-		y = 0;
-		int num;
-		do {
-			num = (int) (Math.random() * 30 + 1);
-		} while (contains(num,0));
-		int side;
-		do {
-			side = (int) (Math.random() * 10 + 5);
-		} while ((side + num) > 35);
-		makeSquare(num,y,side);
+		for (int i = 0; i < 35; i ++){
+			for (int a = 0; a < 90; a ++){
+				new Hogwarts(i,a);
+			}
+		}
+		createPassage(0, coordinates.size()-1);
 	}
+	
 	public Hogwarts (int x, int y){
 		this.x = x;
 		this.y = y;
@@ -34,38 +33,89 @@ public class Hogwarts {
 			maxY.add(this);
 		}
 	}
-	public static void makeSquare(int x, int y, int side){
-		max ++;
-		if (max >= 3){
-			maxY.clear();
+	public static void createPassage(int start, int end){
+		ArrayList <Hogwarts> places = new ArrayList <Hogwarts> (coordinates.subList(start,end));
+		int y = places.get(0).y;
+		int y2 = places.get(places.size() -1).y;
+		for (int i = y + 1; i < y2 + 1; i = i +2){
+			int times = (int) (Math.random() * 5 + 4);
+			ArrayList <Integer> ints = new ArrayList <Integer> ();
+			for (int j = 0; j < times; j ++){
+				int x = 0;
+				do{
+					x = (int) (Math.random() * 30);
+				} while (!(contains(x,i)) && !(ints.contains(x)));
+				ints.add(x);
+			}
+			for (int a = 0; a < 35; a ++){
+				if (!(ints.contains(a))){
+					delete(a,i);
+				}
+			}
+				/*
+				int index; 
+				int x = 0;
+				do{
+					x = (int) (Math.random() * 30);
+				} while (!(contains(x,i)));
+				int side = 0;
+				do{
+					side = (int) (Math.random() * (maxLength(x, i)) + 5);
+				} while (x + side > 35);
+				for (int a = x; a < (x + side); a ++){
+					delete(a,i);
+				}
+				*/
 		}
-		for (int i = 0; i <= side; i ++){
-			new Hogwarts(x, y + i);
-			new Hogwarts((x+side), (y + i));
-			new Hogwarts((x + i), y);
-			new Hogwarts((x + i), (y + side), true);
-		}
-		
 	}
-	public static void negSquare(int x, int y, int side){
-		max++;
-		if (max >= 3){
-			maxY.clear();
+	public static int maxLength(int x, int y){
+		int length = 0;
+		while (contains(x,y)){
+			length ++;
+			x ++;
 		}
-		for (int i = 0; i <= side; i ++){
-			new Hogwarts(x, y + i);
-			new Hogwarts((x - side), (y + i));
-			new Hogwarts((x - i), y);
-			new Hogwarts((x - i), (y + side), true);
+		length = length - 10;
+		if (length < 0){
+			length = 0;
+		}
+		return length;
+	}
+	public static boolean checkDeadEnds(int x, int y){
+		if (contains(x + 1,y)){
+			return checkDeadEnds(x + 1,y);
+		}
+		else{
+			if (contains(x,y + 1)){
+				return true;
+			}
+			else{
+				return false;
+			}
 		}
 	}
-	/*
-	public void addLines(){
-		int index = (int) (Math.random() * maxY.size() - 1);
-		Hogwarts place1 = maxY.get(index);
-		ArrayList <Hogwarts> list = new ArrayList <Hogwarts> (coordinates.subList()
+	public static boolean checkDeadEndsLeft(int x, int y){
+		if (contains(x - 1,y)){
+			return checkDeadEnds(x - 1,y);
+		}
+		else{
+			if (contains(x,y + 1)){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
 	}
-	*/
+	public static void delete(int x, int y){
+		for (int a = 0; a < coordinates.size(); a ++){
+			if (coordinates.get(a).x == x && coordinates.get(a).y == y){
+				walls.add(coordinates.get(a));
+				coordinates.remove(a);
+				break;
+			}
+		}
+	}
+	
 	public static boolean contains(int xvalue, int yvalue){
 		for (int i = 0; i < coordinates.size(); i ++){
 			if (coordinates.get(i).y == yvalue){
@@ -76,46 +126,19 @@ public class Hogwarts {
 		}
 		return false;
 	}
-	public static void extend(int a){
-		boolean s = false;
-		map(a);
-		int place;
-		do {
-			place = (int)(Math.random() * (maxY.size()-1));
-		} while (maxY.get(place).x > 30);
-		int top = (int)(Math.random() * 3 + 1);
-		int x = maxY.get(place).x;
-		int y = maxY.get(place).y - top;
-		int pos = (int) (Math.random() * 2 + 1);
-		int side;
-		if (x >= 30){
-			pos = 2;
-		}
-		if (x <= 5){
-			pos = 1;
-		}
-		if (pos == 1){
-			do {
-				side = (int) (Math.random() * 10 + 5);
-			} while ((side + x) > 35); 
-		}
-		else{
-			do {
-				side = (int) (Math.random() * 10 + 5);
-			} while ((x - side ) < 1);
-		}
-		for (int i = maxY.size() -1; i >= 0; i --){
-			if (maxY.get(i).y == y){
-				maxY.remove(i);
+	public static int getMax(){
+		int max = coordinates.get(coordinates.size()-1).y;
+		return max;
+	}
+	public static void extend(int f){
+		int index1 = coordinates.size();
+		int max = getMax() + 1;
+		for (int i = 0; i < 35; i ++){
+			for (int a = max; a < (max + 10); a ++){
+				new Hogwarts(i,a);
 			}
 		}
-		if (pos == 1){
-			makeSquare(x,y,side);
-		}
-		else{
-			negSquare(x,y,side);
-		}
-		
+		createPassage(index1, coordinates.size() -1);
 	}
 	public static void map(int y){
 		if (y >= 20){
