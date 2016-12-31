@@ -15,7 +15,8 @@ public class GamePanel extends JPanel implements ActionListener,KeyListener{
 	public String direction; 
 	public boolean start = false;
 	public GamePanel()
-	{  
+	{  	
+	
 		//added
 		this.setLayout(null);
 		this.setOpaque(true);
@@ -44,18 +45,17 @@ public class GamePanel extends JPanel implements ActionListener,KeyListener{
 		for (int i = 0; i < 20; i ++){
 			hogwarts.add();
 		}
-	}
+	}   
 	public void play(String direction){
 		rand.move(direction);
 		Hogwarts.map(rand.getY());
-		
 		if (Hogwarts.scrolling){
 		}
 		else{
 			Hogwarts.extend(rand.getY());
 		}
 		//repaint();
-	}
+	} 
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		for (int i = 0; i < Hogwarts.coordinates.size(); i ++){
@@ -68,6 +68,7 @@ public class GamePanel extends JPanel implements ActionListener,KeyListener{
 				g.setColor(Color.RED);
 				g.fillOval(x*20, y * 20, 10, 10);
 			}  
+			
 		}   
 		int xr = rand.getX(); 
 		int yr = rand.getY();
@@ -76,7 +77,7 @@ public class GamePanel extends JPanel implements ActionListener,KeyListener{
 		g.fillOval(xr*20,yr*20,20,20);
 		if (extra){
 			rand.followers ++;
-		}
+		}   
 		rand.addPlaces(Hogwarts.getPlace(xr,yr));
 		for (int i = 0; i < rand.tail.size(); i ++){
 			int x = rand.tail.get(i).x;
@@ -84,9 +85,9 @@ public class GamePanel extends JPanel implements ActionListener,KeyListener{
 			g.setColor(Color.BLUE);
 			g.fillOval(x*20,y*20,10,10);
 		} 
-		
-	}  
+	}     
 	//added
+	 
 	public void ghostmove(){
 		red.caughtTail();
 		boolean frozen = red.frozen();
@@ -96,7 +97,8 @@ public class GamePanel extends JPanel implements ActionListener,KeyListener{
 		else{
 			red.move(rand);
 		} 
- 	}  
+ 	}       
+	//keyListener 
 	public void keyPressed(KeyEvent e){ 
 		start = true;
 		if (e.getKeyCode() == 37){    
@@ -109,20 +111,22 @@ public class GamePanel extends JPanel implements ActionListener,KeyListener{
 			moveDown = false;
 			moveSide = true;
 		}
-	}
+	}  
+	
 	public void keyReleased(KeyEvent e){
 	}
 	public void keyTyped(KeyEvent e){		
 	}   
 	public void actionPerformed(ActionEvent e){
 		if (e.getActionCommand() == "Timer")
-		{
+		{ 
 			//added
 			if (moveSide){
 				play(direction);
 				moveSide = false;
 			}  
 			else{ 
+			
 				boolean move;
 				Hogwarts.map(rand.getY());
 				boolean map = Hogwarts.scrolling;
@@ -131,15 +135,15 @@ public class GamePanel extends JPanel implements ActionListener,KeyListener{
 					if (move){
 						Hogwarts.scroll();
 						red.scroll();
-					//	pinky.scroll();
-					}
+ 					}
 					else{
+						
 					}  
 				} 
 				else{
 					move = rand.moveDown();
 				}
-				Hogwarts.extend(rand.getY());	
+				Hogwarts.extend(rand.getY());
 				Hogwarts.add();
 			}
 			if (start){
