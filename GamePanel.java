@@ -15,8 +15,7 @@ public class GamePanel extends JPanel implements ActionListener,KeyListener{
 	public String direction; 
 	public boolean start = false;
 	public GamePanel()
-	{  	
-	
+	{  	  
 		//added
 		this.setLayout(null);
 		this.setOpaque(true);
@@ -45,6 +44,7 @@ public class GamePanel extends JPanel implements ActionListener,KeyListener{
 		for (int i = 0; i < 20; i ++){
 			hogwarts.add();
 		}
+		
 	}   
 	public void play(String direction){
 		rand.move(direction);
@@ -61,14 +61,15 @@ public class GamePanel extends JPanel implements ActionListener,KeyListener{
 		for (int i = 0; i < Hogwarts.coordinates.size(); i ++){
 			int x = Hogwarts.coordinates.get(i).x;
 			int y = Hogwarts.coordinates.get(i).y;
-			g.drawRect(x*20,y*20,20,20);
-			g.setColor(Color.WHITE);
-			g.fillRect(x*20,y*20,20,20); 
-			if (Hogwarts.coordinates.get(i).extra){
-				g.setColor(Color.RED);
-				g.fillOval(x*20, y * 20, 10, 10);
-			}  
-			
+			if (!(Blinking.contains(x,y))){
+				g.drawRect(x*20,y*20,20,20);
+				g.setColor(Color.WHITE);
+				g.fillRect(x*20,y*20,20,20); 
+				if (Hogwarts.coordinates.get(i).extra){
+					g.setColor(Color.RED);
+					g.fillOval(x*20, y * 20, 10, 10);
+				}  
+			}
 		}   
 		int xr = rand.getX(); 
 		int yr = rand.getY();
@@ -87,7 +88,6 @@ public class GamePanel extends JPanel implements ActionListener,KeyListener{
 		} 
 	}     
 	//added
-	 
 	public void ghostmove(){
 		red.caughtTail();
 		boolean frozen = red.frozen();
@@ -111,8 +111,8 @@ public class GamePanel extends JPanel implements ActionListener,KeyListener{
 			moveDown = false;
 			moveSide = true;
 		}
+		
 	}  
-	
 	public void keyReleased(KeyEvent e){
 	}
 	public void keyTyped(KeyEvent e){		
@@ -120,36 +120,38 @@ public class GamePanel extends JPanel implements ActionListener,KeyListener{
 	public void actionPerformed(ActionEvent e){
 		if (e.getActionCommand() == "Timer")
 		{ 
-			//added
-			if (moveSide){
-				play(direction);
-				moveSide = false;
-			}  
-			else{ 
-			
-				boolean move;
-				Hogwarts.map(rand.getY());
-				boolean map = Hogwarts.scrolling;
-				if (map){
-					move = rand.moveDown(1);
-					if (move){
-						Hogwarts.scroll();
-						red.scroll();
- 					}
+			if(rand.lives > 0){
+				//added
+				if (moveSide){
+					play(direction);
+					moveSide = false;
+				}  
+				else{ 
+					boolean move;
+					Hogwarts.map(rand.getY());
+					boolean map = Hogwarts.scrolling;
+					if (map){
+						move = rand.moveDown(1);
+						if (move){
+							Hogwarts.scroll();
+							red.scroll();
+						}
+						else{
+						}  
+					} 
 					else{
-						
-					}  
-				} 
-				else{
-					move = rand.moveDown();
+						move = rand.moveDown();
+					}
+					Hogwarts.extend(rand.getY());
+					Hogwarts.add();
 				}
-				Hogwarts.extend(rand.getY());
-				Hogwarts.add();
+				if (start){
+					ghostmove();
+				}
+				repaint();
+				Blinking.allBlink();
 			}
-			if (start){
-				ghostmove();
-			}
-			repaint();
 		}
 	}
 } 
+
