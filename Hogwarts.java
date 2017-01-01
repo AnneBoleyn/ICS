@@ -3,13 +3,11 @@ import java.util.*;
 public class Hogwarts {
 	public static ArrayList <Hogwarts> coordinates = new ArrayList <Hogwarts> ();
 	public static ArrayList <Hogwarts> maxY = new ArrayList <Hogwarts> ();
-	public static ArrayList <Hogwarts> holes = new ArrayList <Hogwarts> ();
 	public int x, y; 
 	boolean extra = false;
 	public static boolean scrolling = false;
 	public static int max = 0; 
 	public static int count = 0;
-	public static boolean blink = true;
 	public Hogwarts(){
 		for (int i = 0; i < 35; i ++){
 			for (int a = 0; a < 90; a ++){
@@ -17,6 +15,7 @@ public class Hogwarts {
 			}
 		}
 		createPassage(0, coordinates.size()-1);
+		createWalls(0,coordinates.size()-1);
 	}
 	
 	public Hogwarts (int x, int y){
@@ -39,19 +38,16 @@ public class Hogwarts {
 		int y = places.get(0).y;
 		int y2 = places.get(places.size() -1).y;
 		for (int i = y + 1; i < y2 + 1; i = i +2){
-			System.out.println(i + "*" + y2);
 			int times = (int) (Math.random() * 5 + 4);
 			ArrayList <Integer> ints = new ArrayList <Integer> ();
 			for (int j = 0; j < times; j ++){
-				System.out.println(j);
 				int x = 0;
 				int count = 0;
 				do{
 					x = (int) (Math.random() * 30);
-					System.out.println("generating " + x);
 				} while (!(contains(x,i)) && !(ints.contains(x)));
 				ints.add(x);
-				//holes.add(getPlace(x,i));
+				new Blinking(x,i);
 			}
 			for (int a = 0; a < 35; a ++){
 				if (!(ints.contains(a))){
@@ -60,7 +56,6 @@ public class Hogwarts {
 			}
 		}
 	}
-	/*
 	public static void createWalls(int start, int end){
 		ArrayList <Hogwarts> places = new ArrayList <Hogwarts> (coordinates.subList(start,end));
 		int y = places.get(0).y;
@@ -70,20 +65,9 @@ public class Hogwarts {
 			Hogwarts spot = places.get(index);
 			places.remove(index);
 			delete(spot.x, spot.y);
-			holes.add(spot);
+			new Blinking(spot.x,spot.y);
 		}
 	}
-	public static void blinkIn(){
-		coordinates.addAll(holes);
-	}
-	public static void blinkOut(){
-		for (int i = coordinates.size()-1; i <= 0; i --){
-			if (holes.contains(coordinates.get(i))){
-				coordinates.remove(i);
-			}
-		}
-	}
-	*/
 	public static int maxLength(int x, int y){
 		int length = 0;
 		while (contains(x,y)){
@@ -154,15 +138,7 @@ public class Hogwarts {
 			}
 		}
 		createPassage(index1, coordinates.size() -1);
-		/*if (blink){
-			blinkIn();
-			blink = false;
-		}
-		else{
-			blinkOut();
-			blink = true;
-		}
-		*/
+		createWalls(index1, coordinates.size() -1);
 	}
 	public static void map(int y){
 		if (y >= 20){
