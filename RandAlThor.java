@@ -10,6 +10,7 @@ public class RandAlThor{
 	public static ArrayList <Hogwarts> places = new ArrayList <Hogwarts>();
 	public static ArrayList <Hogwarts> tail = new ArrayList <Hogwarts>();
 	public static int index;
+	public static int lives = 3;
 	public RandAlThor(){
 		score = 0;
 		int location;
@@ -34,13 +35,13 @@ public class RandAlThor{
 	
 	public void move(String direction){
 		if (direction.equals("E")){
-			if (Hogwarts.contains(x+1,y)){  
+			if (Hogwarts.contains(x+1,y) && !(Blinking.contains(x+1,y))){  
 				x = x + 1;
 				moveTail();
 			}
 		}
 		if (direction.equals("W")){
-			if (Hogwarts.contains(x-1,y)){
+			if (Hogwarts.contains(x-1,y) && !(Blinking.contains(x-1,y))){
 				x = x - 1; 
 				moveTail();
 			}
@@ -50,7 +51,7 @@ public class RandAlThor{
 		y = y-1;
 	}
 	public  boolean moveDown(){
-		if (Hogwarts.contains(x, y +1)){
+		if (Hogwarts.contains(x, y +1) && !(Blinking.contains(x, y +1))){
 			y = y + 1;
 			moveTail();
 			return true;
@@ -58,7 +59,7 @@ public class RandAlThor{
 		return false;
 	}
 	public boolean moveDown(int i){
-		if (Hogwarts.contains(x, y+1)){
+		if (Hogwarts.contains(x, y+1) && !(Blinking.contains(x, y + 1))){
 			moveTail();
 			return true;
 		}
@@ -84,5 +85,8 @@ public class RandAlThor{
 			}
 		}
 		return false;
+	}
+	public static void loseLife(){
+		lives --;
 	}
 }
