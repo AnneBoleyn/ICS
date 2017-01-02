@@ -6,9 +6,9 @@ public class Blinking extends Hogwarts{
 	public static ArrayList <Blinking> blinkBlocks = new ArrayList <Blinking> ();
 	public static ArrayList <Blinking> wall = new ArrayList <Blinking> ();
 	public Blinking(int x, int y){
-		super(x,y);
+		super(x,y,1);
 		blink = false;
-		time = (int) Math.random() * 5 + 1;
+		time = (int) Math.random() * 5 + 10;
 		blinkBlocks.add(this);
 	}
 	public void blinking(){
