@@ -25,6 +25,10 @@ public class Hogwarts {
 			coordinates.add(this);
 		}
 	}
+	public Hogwarts(int x, int y, int a){
+		this.x = x;
+		this.y = y;
+	}
 	public Hogwarts (int x, int y, boolean a){
 		this.x = x;
 		this.y = y;
@@ -57,6 +61,7 @@ public class Hogwarts {
 		}
 	}
 	public static void createWalls(int start, int end){
+		System.out.println(start + " " + end);
 		ArrayList <Hogwarts> places = new ArrayList <Hogwarts> (coordinates.subList(start,end));
 		int y = places.get(0).y;
 		int times = (int) (Math.random() * 5 + 4);
@@ -138,7 +143,9 @@ public class Hogwarts {
 			}
 		}
 		createPassage(index1, coordinates.size() -1);
-		createWalls(index1, coordinates.size() -1);
+		if (index1 < coordinates.size() -1){
+			createWalls(index1, coordinates.size() -1);
+		}
 	}
 	public static void map(int y){
 		if (y >= 20){
