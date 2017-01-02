@@ -126,7 +126,7 @@ public class GamePanel extends JPanel implements ActionListener,KeyListener{
 					play(direction);
 					moveSide = false;
 				}  
-				else{ 
+				else{  
 					boolean move;
 					Hogwarts.map(rand.getY());
 					boolean map = Hogwarts.scrolling;
@@ -150,8 +150,8 @@ public class GamePanel extends JPanel implements ActionListener,KeyListener{
 				}
 				repaint();
 				Blinking.allBlink();
+				
 			}
 		}
 	}
 } 
-
