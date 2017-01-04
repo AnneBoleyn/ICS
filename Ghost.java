@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -15,12 +16,16 @@ public class Ghost {
 		protected int gy; 
 		private int size = 20; 
 		private JLabel ghost;
-		public  ArrayList <Paths> coo = new ArrayList <Paths> ();
 		public int freeze = 0;
+		//public Paths shortest = new Paths(); 
+		//public Paths path = new Paths();
+		
+		private  ArrayList <Coordniates>  path = new ArrayList <Coordniates> ();
+		private  ArrayList <Coordniates>  shortest = new ArrayList <Coordniates> ();
 		
 	    //constructor
 	public Ghost(ImageIcon img, RandAlThor player) {
-		
+
 		ghost = new JLabel(img); 
 		int location; //= (int) (Math.random() * Hogwarts.coordinates.size());
 		do{
@@ -34,6 +39,7 @@ public class Ghost {
 		gy*=size;
 		ghost.setLocation (gx, gy);
 		ghost.setSize (size, size) ;
+		
 	}
 	
 	//random movement method
@@ -70,57 +76,46 @@ public class Ghost {
 	public void checkcol(RandAlThor player) 
 	{
 		if (player.getX() == gx/size && player.getY() == gy/size)
+		{
 			System.out.print("lost!!!");
+			//INSTEAD OF LOSING 
+			
+			System.exit(0);
+		}
+		//if (shortest.size() < 2)
+		//{
+			//CODE FOR LOOSING
+		//	System.exit(0);
+		//}
+		
 		caughtTail();
+		
 	}
 	
+
 	
 	public void chase(RandAlThor player, String dir){
-	//px and py are square numbers
 		
-	int rx = gx/size; 
-	int ry = gy/size;
-
-	//System.out.println(player.getX() + "  " + rx);
-	//horizontal
-
-	
-	if (player.getX() == rx)
-	{
-	
-		if (ry < player.getY())
+		
+		
+		shortest.clear();
+		path.clear();
+		find(player, gx/size, gy/size);
+		//set the ghost location 
+		//shortest = sendpath;'
+		if (shortest.size() < 2)
 		{
-			if (Hogwarts.contains(gx/size, gy/size+1))
-				gy += size; 
+			gx = player.getX()*size;
+			gy = player.getY()*size;
 		}
-		else if (ry>player.getY())
+		else
 		{
-			if (Hogwarts.contains(gx/size, gy/size-1))
-				gy -= size; 
+			gx = shortest.get(1).x * size;
+			gy =  shortest.get(1).y*size;
+			ghost.setLocation(gx, gy);
 		}
-	}
-	else if (player.getY() == ry)
-	{
+			checkcol(player);
 	
-		//ghost on top of player 
-		if (rx > player.getX())
-		{
-			if (Hogwarts.contains(gx/size-1, gy)) 
-				gx -= size; 
-	}
-		else if (rx < player.getX())
-		{
-			if (Hogwarts.contains(gx/size+1, gy)) 
-				gx += size; 
-		}
-	}
-	else
-		findpath(player, dir);
-
-	
-
-	ghost.setLocation (gx,  gy);
-	checkcol(player);
 	
 	}//end chase
 	
@@ -140,58 +135,70 @@ public void scroll(){
 		}
 			
 		
-	
-	
-	public void findpath(RandAlThor player, String dir){
-		
-		int rx = gx/size; 
-		int ry = gy/size; 
-		int px = player.getX();
-		int py = player.getY(); 
-		
-		if (dir.equals("E"))
-			px -= 4; 
-		if (dir.equals("W"))
-			px += 4;
-			
-		
-		//if ghost is up and left 
-		if (rx < px && ry< py)
-		{
-			 if (Hogwarts.contains(rx, ry+1))
-				gy+=size;
-			 else if (Hogwarts.contains(rx+1, ry))
-				gx+=size;	
+public boolean ccontains(int xvalue, int yvalue){
+	for (int i = 0; i < path.size(); i ++){
+		if ((path.get(i).y == yvalue) && (path.get(i).x == xvalue)){
+			return true;
 		}
-		//if ghost is down left
-		else if (rx<px && ry>py)
-		{
-			if (Hogwarts.contains(rx+1, ry))
-				gx+=size;
-			else if (Hogwarts.contains(rx, ry-1))
-				gy-=size;
-		}
-		//if ghost is right and up 
-		else if (rx>px && ry<py)
-		{
-			if (Hogwarts.contains(rx, ry+1))
-				gy+=size;
-			else if (Hogwarts.contains(rx-1, ry))
-				gx-=size;
-		}
-		//if ghost is right and down 
-		else if (rx > px && ry> py)
-		{
-			 if (Hogwarts.contains(rx, ry-1))
-				gy-=size;
-			 else if (Hogwarts.contains(rx+1, ry))
-				gx+=size;	
-		}
-		else ;
-		
-			
 	}
+	return false;
+}
+	
 		
+	//method to find the shortest path to character 
+	public void find (RandAlThor player, int x, int y){
+		checkcol(player);
+	//base cases 
+		if (path.size() > 0 && shortest.size() > 0 && path.size() > shortest.size())
+			return;
+		if (!Hogwarts.contains(x, y))
+		{
+			//System.out.print("out of map");
+			return; 
+		}
+		else if (ccontains(x, y))
+		{
+		//	System.out.println("foundpath");
+			return; 
+		}
+		else if ((x == player.getX()) && (y == player.getY()))
+		{
+			//System.out.println(path.size() + "   " + path.get(1).x + " " + path.get(1).y);
+			//if (shortest.size() != 0)
+				//System.out.println(shortest.size() + "   " + shortest.get(1).x + " " + shortest.get(1).y);
+			//else
+			//	System.out.println(" 0 0 0 ");
+			if (shortest.size() == 0)
+			{
+				shortest.clear();
+				for (int i = 0; i < path.size(); i++)
+					shortest.add(path.get(i));
+			}
+			if (path.size() < shortest.size())
+			{
+				shortest.clear();
+				for (int i = 0; i < path.size(); i++)
+					shortest.add(path.get(i));
+			}
+			return;
+			 
+		}
+		path.add(new Coordniates(x, y)); 
+		//path.addcoo(x+1, y);
+		find(player, x-1, y); 
+		//path.addcoo(x-1, y);
+		find(player, x, y-1); 
+		//path.addcoo(x, y+1);
+		find(player, x+1, y); 
+		//path.addcoo(x, y-1);
+		find(player, x, y+1); 
+		
+		path.remove(path.size()-1); 
+		return;
+		
+	}
+	 
+	
 	public void caughtTail(){
 		boolean tail = RandAlThor.checkTail(gx/size, gy/size);
 		if (tail){
